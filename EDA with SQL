@@ -1,0 +1,135 @@
+DB2 connection problem
+
+Im Not sure what the problem with my connection to Db2 is. I have attached my credentials and code for your viewing.
+
+My error:
+
+
+Updating HTML index of packages in '.Library'
+Making 'packages.html' ... done
+Warning message in odbcDriverConnect(conn_path):
+“[RODBC] ERROR: state 01000, code 0, message [unixODBC][Driver Manager]Can't open lib 'IBM DB2 RODBC Driver' : file not found”Warning message in odbcDriverConnect(conn_path):
+“ODBC connection failed”
+-1
+Error in sqlTypeInfo(conn): first argument is not an open RODBC channel
+Traceback:
+
+1. sqlTypeInfo(conn)
+2. stop("first argument is not an open RODBC channel")
+
+
+
+My code to connect to Db2:
+
+
+# provide your solution here
+install.packages("RODBC")
+library(RODBC)
+
+dsn_driver <- "{IBM DB2 RODBC Driver}"
+dsn_database <- "bludb"
+dsn_hostname <- "764264db-9824-4b7c-82df-40d1b13897c2.bs2io90l08kqb1od8lcg.databases.appdomain.cloud"
+dsn_port <- "32536"              
+dsn_protocol <- "TCPIP"           
+dsn_uid <- "drh70804"             
+dsn_pwd <- "FslChWJwQs8o6ayZ"           
+dsn_security <-"ssl"
+
+conn_path <- paste("DRIVER=",dsn_driver,
+                  ";DATABASE=",dsn_database,
+                  ";HOSTNAME=",dsn_hostname,
+                  ";PORT=",dsn_port,
+                  ";PROTOCOL=",dsn_protocol,
+                  ";UID=",dsn_uid,
+                  ";PWD=",dsn_pwd,
+                  ";SECURITY=",dsn_security,        
+                    sep="")
+conn <- odbcDriverConnect(conn_path)
+conn
+
+sql.info <- sqlTypeInfo(conn)
+    conn.info <- odbcGetInfo(conn)
+    conn.info["DBMS_Name"]
+    conn.info["DBMS_Ver"]
+    conn.info["Driver_ODBC_Ver"]
+
+tab.frame <- sqlTables(conn, schema="drh70804") # e.g. "SYSIBM"
+nrow(tab.frame)
+tab.frame$TABLE_NAME
+
+
+My service credentials:
+
+{
+  "connection": {
+    "cli": {
+      "arguments": [
+        [
+          "-u",
+          "drh70804",
+          "-p",
+          "FslChWJwQs8o6ayZ",
+          "--ssl",
+          "--sslCAFile",
+          "1dd14d0c-1b52-4f63-a606-53ecba28771d",
+          "--authenticationDatabase",
+          "admin",
+          "--host",
+          "764264db-9824-4b7c-82df-40d1b13897c2.bs2io90l08kqb1od8lcg.databases.appdomain.cloud:32536"
+        ]
+      ],
+      "bin": "db2",
+      "certificate": {
+        "certificate_base64": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURIVENDQWdXZ0F3SUJBZ0lVT3dvMC9va09CUEN5RjFWeFJxVGhKRW9ubDBVd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0hqRWNNQm9HQTFVRUF3d1RTVUpOSUVOc2IzVmtJRVJoZEdGaVlYTmxjekFlRncweU1EQTRNRFF3TWpVMwpNalphRncwek1EQTRNREl3TWpVM01qWmFNQjR4SERBYUJnTlZCQU1NRTBsQ1RTQkRiRzkxWkNCRVlYUmhZbUZ6ClpYTXdnZ0VpTUEwR0NTcUdTSWIzRFFFQkFRVUFBNElCRHdBd2dnRUtBb0lCQVFEb0ZFNGQ0SGdOeXZMUVIwR3gKQTB0amRXQnM4NVBjTDNyRStjN1R3K2diRUdQSUxJU0VZV3o4Y1g1TG1XQk0rY1FnOG9VeSsrQXJ3OEoxaXdRZQpySmlIU2I1clF4WTM0c3BQeGRFVEZkWEhScnJhMGU2VmM4MW42TllJL0ZHSnl1Q3hrTG5GMUtFQW9hbHYwaDM2CnhDT0FvcXRwTlFrTzNpMTRGeU0yRDRiajkxckI4RGk4Vy9XMVpVdVhMNGwzZXVLZUVCeTRuZmhJV3kySVc3aUMKbGpMZ3RlN3hZTDVHbVpKOUdsYWtrSnJ1cnpNREFQLzVUYnRlUUIydElodTBRSVRFZHlESVFYUEZGRDBHYzloZAo3M29JdnpVZUJ3VC9uRHN3OTJNNC82SkdtZWpKN0lpdFBTN3Y2a2dlUVhINDlBaUVJNXpQdUVpVzNOYi9GR0pYCmY2a2JBZ01CQUFHalV6QlJNQjBHQTFVZERnUVdCQlR2RzZ2RU5MRjFVbWZnQ003MmxOcmMzSDI2bURBZkJnTlYKSFNNRUdEQVdnQlR2RzZ2RU5MRjFVbWZnQ003MmxOcmMzSDI2bURBUEJnTlZIUk1CQWY4RUJUQURBUUgvTUEwRwpDU3FHU0liM0RRRUJDd1VBQTRJQkFRQTgvdFVnUTZlaTZYWHZndDJ0dUdrbkpva1Y5UWNkaTNZbFVFWkNDUytjClVQZ3NnMnVBMldxcHlWTm1mRkhjcHZ1Vmp0VHRYTmk2NUM2WlZsRnYxc3p1cU9zdFB5bkJ4blN4cUs0dkc0dTkKVjBWRUgxcE1tZnZBSmxkV3c4UEJTZGJtTk1HdGM4SzlwT0o5OVdBQ1ZFRXVXVGdDeHJKTXFBZnpYUXlidUV0dwp0cW1pV2swTmVXNGk5ZEY4S2dTWUVaQWFodXVBSlRldXB2R2RPV1U0eEV4bm03aEVRbmZPV2ZITThDd08xNWFZClRGQ2s0Q0pDUmR4Mlg5U284V3o1Z3MzcncyRkFDQlJyZ0NYeFFDZnZrZTZUdVNHNkxFRHJHbmpWaXVSQkpZdW4KT1RxWXROaVBHaHpuTHJrL0Fzam1LMzBxQmFLTmFyNUdQajhqalpNb2RiZ04KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=",
+        "name": "1dd14d0c-1b52-4f63-a606-53ecba28771d"
+      },
+      "composed": [
+        "db2 -u drh70804 -p FslChWJwQs8o6ayZ --ssl --sslCAFile 1dd14d0c-1b52-4f63-a606-53ecba28771d --authenticationDatabase admin --host 764264db-9824-4b7c-82df-40d1b13897c2.bs2io90l08kqb1od8lcg.databases.appdomain.cloud:32536"
+      ],
+      "environment": {},
+      "type": "cli"
+    },
+    "db2": {
+      "authentication": {
+        "method": "direct",
+        "password": "FslChWJwQs8o6ayZ",
+        "username": "drh70804"
+      },
+      "certificate": {
+        "certificate_base64": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURIVENDQWdXZ0F3SUJBZ0lVT3dvMC9va09CUEN5RjFWeFJxVGhKRW9ubDBVd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0hqRWNNQm9HQTFVRUF3d1RTVUpOSUVOc2IzVmtJRVJoZEdGaVlYTmxjekFlRncweU1EQTRNRFF3TWpVMwpNalphRncwek1EQTRNREl3TWpVM01qWmFNQjR4SERBYUJnTlZCQU1NRTBsQ1RTQkRiRzkxWkNCRVlYUmhZbUZ6ClpYTXdnZ0VpTUEwR0NTcUdTSWIzRFFFQkFRVUFBNElCRHdBd2dnRUtBb0lCQVFEb0ZFNGQ0SGdOeXZMUVIwR3gKQTB0amRXQnM4NVBjTDNyRStjN1R3K2diRUdQSUxJU0VZV3o4Y1g1TG1XQk0rY1FnOG9VeSsrQXJ3OEoxaXdRZQpySmlIU2I1clF4WTM0c3BQeGRFVEZkWEhScnJhMGU2VmM4MW42TllJL0ZHSnl1Q3hrTG5GMUtFQW9hbHYwaDM2CnhDT0FvcXRwTlFrTzNpMTRGeU0yRDRiajkxckI4RGk4Vy9XMVpVdVhMNGwzZXVLZUVCeTRuZmhJV3kySVc3aUMKbGpMZ3RlN3hZTDVHbVpKOUdsYWtrSnJ1cnpNREFQLzVUYnRlUUIydElodTBRSVRFZHlESVFYUEZGRDBHYzloZAo3M29JdnpVZUJ3VC9uRHN3OTJNNC82SkdtZWpKN0lpdFBTN3Y2a2dlUVhINDlBaUVJNXpQdUVpVzNOYi9GR0pYCmY2a2JBZ01CQUFHalV6QlJNQjBHQTFVZERnUVdCQlR2RzZ2RU5MRjFVbWZnQ003MmxOcmMzSDI2bURBZkJnTlYKSFNNRUdEQVdnQlR2RzZ2RU5MRjFVbWZnQ003MmxOcmMzSDI2bURBUEJnTlZIUk1CQWY4RUJUQURBUUgvTUEwRwpDU3FHU0liM0RRRUJDd1VBQTRJQkFRQTgvdFVnUTZlaTZYWHZndDJ0dUdrbkpva1Y5UWNkaTNZbFVFWkNDUytjClVQZ3NnMnVBMldxcHlWTm1mRkhjcHZ1Vmp0VHRYTmk2NUM2WlZsRnYxc3p1cU9zdFB5bkJ4blN4cUs0dkc0dTkKVjBWRUgxcE1tZnZBSmxkV3c4UEJTZGJtTk1HdGM4SzlwT0o5OVdBQ1ZFRXVXVGdDeHJKTXFBZnpYUXlidUV0dwp0cW1pV2swTmVXNGk5ZEY4S2dTWUVaQWFodXVBSlRldXB2R2RPV1U0eEV4bm03aEVRbmZPV2ZITThDd08xNWFZClRGQ2s0Q0pDUmR4Mlg5U284V3o1Z3MzcncyRkFDQlJyZ0NYeFFDZnZrZTZUdVNHNkxFRHJHbmpWaXVSQkpZdW4KT1RxWXROaVBHaHpuTHJrL0Fzam1LMzBxQmFLTmFyNUdQajhqalpNb2RiZ04KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=",
+        "name": "1dd14d0c-1b52-4f63-a606-53ecba28771d"
+      },
+      "composed": [
+        "db2://drh70804:FslChWJwQs8o6ayZ@764264db-9824-4b7c-82df-40d1b13897c2.bs2io90l08kqb1od8lcg.databases.appdomain.cloud:32536/bludb?authSource=admin&replicaSet=replset"
+      ],
+      "database": "bludb",
+      "host_ros": [
+        "764264db-9824-4b7c-82df-40d1b13897c2.bs2io90l08kqb1od8lcg.databases.appdomain.cloud:32761"
+      ],
+      "hosts": [
+        {
+          "hostname": "764264db-9824-4b7c-82df-40d1b13897c2.bs2io90l08kqb1od8lcg.databases.appdomain.cloud",
+          "port": 32536
+        }
+      ],
+      "jdbc_url": [
+        "jdbc:db2://764264db-9824-4b7c-82df-40d1b13897c2.bs2io90l08kqb1od8lcg.databases.appdomain.cloud:32536/bludb:user=<userid>;password=<your_password>;sslConnection=true;"
+      ],
+      "path": "/bludb",
+      "query_options": {
+        "authSource": "admin",
+        "replicaSet": "replset"
+      },
+      "replica_set": "replset",
+      "scheme": "db2",
+      "type": "uri"
+    }
+  },
+  "instance_administration_api": {
+    "deployment_id": "crn:v1:bluemix:public:dashdb-for-transactions:eu-gb:a/ebc3e1dd2e464cc8a301ac93f5559e3f:54344f62-cf78-4994-abd6-8663f9146380::",
+    "instance_id": "crn:v1:bluemix:public:dashdb-for-transactions:eu-gb:a/ebc3e1dd2e464cc8a301ac93f5559e3f:54344f62-cf78-4994-abd6-8663f9146380::",
+    "root": "https://apieugb.db2.cloud.ibm.com/v5/ibm"
+  }
+}
+
+Thank you for reading my problem
